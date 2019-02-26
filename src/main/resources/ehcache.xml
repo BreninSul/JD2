@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<config
+        xmlns:xsi='http://www.w3.org/2001/XMLSchema-instance'
+        xmlns:jsr107='http://www.ehcache.org/v3/jsr107'
+        xmlns='http://www.ehcache.org/v3'
+        xsi:schemaLocation="
+        http://www.ehcache.org/v3 http://www.ehcache.org/schema/ehcache-core-3.1.xsd
+        http://www.ehcache.org/v3/jsr107 http://www.ehcache.org/schema/ehcache-107-ext-3.1.xsd">
+
+    <service>
+        <jsr107:defaults default-template="maxEntriesOnHeapCache" enable-management="true" enable-statistics="true">
+            <jsr107:cache name="example2" template="example"/>
+        </jsr107:defaults>
+    </service>
+
+    <cache-template name="maxEntriesOnHeapCache">
+        <heap unit="entries">20</heap>
+    </cache-template>
+
+
+    <cache-template name="example">
+        <value-type>com.gmail.breninsul.jd2.pojo.User</value-type>
+        <heap unit="entries">2</heap>
+    </cache-template>
+
+
+    <cache alias="UserCache" >
+        <resources>
+            <heap unit="entries">2</heap>                     <!--3-->
+            <offheap unit="MB">500</offheap>                     <!--4-->
+        </resources>
+    </cache>
+
+</config>

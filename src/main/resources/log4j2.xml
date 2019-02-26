@@ -1,0 +1,46 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Configuration status="DEBUG">
+    <Properties>
+        <Property name="basePath">/etc/temp/JD1/</Property>
+    </Properties>
+
+    <Appenders>
+        <RollingFile name="File" fileName="${basePath}/errorDZ.log"
+                     filePattern="mylog-%d{yyyy-MM-dd}.%i.log">
+            <PatternLayout pattern="[%-5level] %d{yyyy-MM-dd HH:mm:ss.SSS} [%t] %c{1} - %msg%n" />
+            <Policies>
+                <TimeBasedTriggeringPolicy />
+                <SizeBasedTriggeringPolicy size="30 MB" />
+            </Policies>
+        </RollingFile>
+        <RollingFile name="File2" fileName="${basePath}/infoDZ.log"
+                     filePattern="mylog-%d{yyyy-MM-dd}.%i.log">
+            <PatternLayout pattern="[%-5level] %d{yyyy-MM-dd HH:mm:ss.SSS} [%t] %c{1} - %msg%n" />
+            <Policies>
+                <TimeBasedTriggeringPolicy />
+                <SizeBasedTriggeringPolicy size="30 MB" />
+            </Policies>
+        </RollingFile>
+        <Console name="Console"  target="SYSTEM_OUT">
+            <PatternLayout   pattern="[%-5level] %d{yyyy-MM-dd HH:mm:ss.SSS} [%t] %c{1} - %msg%n" />
+        </Console>
+
+    </Appenders>
+    <Loggers>
+        <Logger name="by" level="ERROR" additivity="false">
+            <AppenderRef ref="File" />
+        </Logger>
+        <Logger name="org.hibernate" level="warn"/>
+        <Logger name="org.hibernate.SQL" level="warn"/>
+        <Logger name="com.zaxxer.hikari" level="warn" />
+        <Logger name="org.hibernate.type.descriptor.sql" level="warn"/>
+        <Logger name="org.hibernate.type" level="warn" />
+        <Logger name="org.hibernate.jdbc" level="warn" />
+        <Logger name="com.gmail.breninsul" level="info" />
+
+        <Root name="cons" level="INFO">
+            <AppenderRef ref="Console" />
+            <AppenderRef ref="File2" />
+        </Root>
+    </Loggers>
+</Configuration>
