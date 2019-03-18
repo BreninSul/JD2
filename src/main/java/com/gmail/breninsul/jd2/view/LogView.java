@@ -53,7 +53,7 @@ public class LogView extends Div {
 
     private InputStream initGrid() {
         List<String> logs = new ArrayList<>();
-        File file = new File("/etc/temp/JD1/info.log");
+        File file = new File("/etc/temp/JD1/infoDZ.log");
         InputStream targetStream=null;
         try {
              targetStream = new FileInputStream(file);
@@ -75,10 +75,3 @@ public class LogView extends Div {
 
 }
 
-class MyListener extends TailerListenerAdapter {
-    @Override
-    public void handle(String line) {
-        ViewUtils.addToLog(line);
-    }
-
-}

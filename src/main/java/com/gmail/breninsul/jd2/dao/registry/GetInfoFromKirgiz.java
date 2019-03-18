@@ -87,7 +87,7 @@ public class GetInfoFromKirgiz implements RegestryDAO {
             log.info("Server is not avilable again",e);
             throw new ServerNotAvailableException("KIRGIZ_DECL");
         } catch (Exception e) {
-            log.error("Error parsing resultpage from AM !!",e);
+            log.error("Error parsing resultpage from Kirgiz !!",e);
             return new ArrayList<Certificate>();
         }
     }
@@ -106,7 +106,7 @@ public class GetInfoFromKirgiz implements RegestryDAO {
         try {
             br = new BufferedReader(new InputStreamReader(regCon.getInputStream(), "UTF-8"));
         } catch (java.io.IOException e) {
-            log.error("Error parsing resultpage from AM !!",e);
+            log.error("Error parsing resultpage from Kirgiz !!",e);
             throw new ServerNotAvailableException("");
         }
         String line;

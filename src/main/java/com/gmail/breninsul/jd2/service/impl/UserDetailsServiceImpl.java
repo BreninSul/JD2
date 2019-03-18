@@ -23,19 +23,18 @@ public class UserDetailsServiceImpl implements UserDetailsService {
     @Autowired
     private UserService userService;
 
-
     @Override
     public UserDetails loadUserByUsername(String name) throws UsernameNotFoundException {
         User user = userService.getUserByName(name);
         if (user == null) {
-            throw new  UsernameNotFoundException("There is no user with name = "+name);
+            throw new UsernameNotFoundException("There is no user with name = " + name);
         }
         Set<GrantedAuthority> authorities = new HashSet();
         log.info("Checking user " + user.toString() + " authorities " + authorities);
         authorities.add(new SimpleGrantedAuthority(user.getRole()));
         UserDetails userDetails =
                 new org.springframework.security.core.userdetails.User(user.getName(),
-                        user.getPass(),user.isEnabled(),true,true,true,
+                        user.getPass(), user.isEnabled(), true, true, true,
                         authorities);
         return userDetails;
     }

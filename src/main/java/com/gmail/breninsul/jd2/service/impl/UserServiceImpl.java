@@ -138,7 +138,8 @@ public class UserServiceImpl extends AbstractService<User, UserDAO> implements U
      @Override
     public User save(User user) {
         log.info("saving user id="+user.getId());
-        if (user.getId()<2) {
+        //Prevent encoding pass second time
+        if (user.getId()<1) {
             user.setPass(passwordEncoder.encode(user.getPass()));
         }
         dao.save(user);

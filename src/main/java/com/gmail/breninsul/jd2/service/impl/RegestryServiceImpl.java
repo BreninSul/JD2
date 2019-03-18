@@ -52,30 +52,23 @@ public class RegestryServiceImpl implements RegestryService {
     GetInfoFromKZ kzRep;
     @Autowired
     GetInfoFromRF rfRep;
+
     @PostConstruct
     public void init() {
-       // cache = createCache(CERTIFICATE_CACHE_LIFETIME_HOURS);
-        cache2=createCache2(CERTIFICATE_CACHE_LIFETIME_HOURS);
+        // cache = createCache(CERTIFICATE_CACHE_LIFETIME_HOURS);
+        cache2 = createCache2(CERTIFICATE_CACHE_LIFETIME_HOURS);
     }
-   /* private Cache createCache(long hours) {
-        MutableConfiguration config = new MutableConfiguration<>();
-        config.setTypes(String.class, List.class)
-                .setStoreByValue(false)
-                .setStatisticsEnabled(true)
-                .setExpiryPolicyFactory(FactoryBuilder.factoryOf(
-                        new AccessedExpiryPolicy(new Duration(TimeUnit.HOURS, hours))));
-        return cacheManager.createCache(CACHE_NAME, config);
-    }*/
-    private Cache createCache2(long hours) {
-        MutableConfiguration config = new MutableConfiguration<>();
-        config.setTypes(String.class, InfoEntity.class)
-                .setStoreByValue(false)
-                .setStatisticsEnabled(true)
-                .setExpiryPolicyFactory(FactoryBuilder.factoryOf(
-                        new AccessedExpiryPolicy(new Duration(TimeUnit.HOURS, hours))));
-        return cacheManager.createCache("InfoEntity", config);
-    }
-    /*private void addToCache(List<Certificate> entity, String value, String country, String certType) {
+
+    /* private Cache createCache(long hours) {
+         MutableConfiguration config = new MutableConfiguration<>();
+         config.setTypes(String.class, List.class)
+                 .setStoreByValue(false)
+                 .setStatisticsEnabled(true)
+                 .setExpiryPolicyFactory(FactoryBuilder.factoryOf(
+                         new AccessedExpiryPolicy(new Duration(TimeUnit.HOURS, hours))));
+         return cacheManager.createCache(CACHE_NAME, config);
+     }*/
+      /*private void addToCache(List<Certificate> entity, String value, String country, String certType) {
         try {
             if (cache == null) {
                 throw new NullPointerException();
@@ -100,13 +93,29 @@ public class RegestryServiceImpl implements RegestryService {
         }
         return entity;
     }*/
+
+    public void clearCache2() {
+        cache2.clear();
+    }
+
+    private Cache createCache2(long hours) {
+        MutableConfiguration config = new MutableConfiguration<>();
+        config.setTypes(String.class, InfoEntity.class)
+                .setStoreByValue(false)
+                .setStatisticsEnabled(true)
+                .setExpiryPolicyFactory(FactoryBuilder.factoryOf(
+                        new AccessedExpiryPolicy(new Duration(TimeUnit.HOURS, hours))));
+        return cacheManager.createCache("InfoEntity", config);
+    }
+
+
     private void addToCache2(InfoEntity entity, String value) {
         try {
             if (cache2 == null) {
                 throw new NullPointerException();
             } else {
                 try {
-                    cache2.put(value , entity);
+                    cache2.put(value, entity);
                 } catch (NullPointerException e) {
                     log.info("Trying to put in cache serch result ");
                 }
@@ -117,14 +126,15 @@ public class RegestryServiceImpl implements RegestryService {
     }
 
     protected InfoEntity getFromCache2(String value) {
-        InfoEntity entity = cache2.get(value );
+        InfoEntity entity = cache2.get(value);
         if (entity == null) {
-            log.info("There is no result in cache for " + value  + ", returning null");
+            log.info("There is no result in cache for " + value + ", returning null");
         } else {
             log.info("There is entity with id=" + value + " returning it");
         }
         return entity;
     }
+
     /**
      * This method returns search result from third-party registrees
      *
@@ -166,40 +176,29 @@ public class RegestryServiceImpl implements RegestryService {
     }
 
     public InfoEntity get(String value, int resultSparrow, int timeOut) {
-        InfoEntity infoEntity=getFromCache2(value);
-        if (infoEntity!=null){
-            log.info("There is result for value="+value+"="+infoEntity);
-            return infoEntity;
+        InfoEntity infoEntity = getFromCache2(value);
+        boolean hasCache = infoEntity != null;
+        if (hasCache) {
+            log.info("There is result for value=" + value + "=" + infoEntity);
+            if (infoEntity.noErrors()) {
+                return infoEntity;
+            } else {
+                log.info("But some server has been not avalible, trying to get new result");
+            }
         }
         try {
             ExecutorService executor = getExecutor();
-            List<Certificate> kirgizhstanDeclarations;
-            List<Certificate> armenianDeclarations;
-            List<Certificate> kazkhstanDeclarations;
-            List<Certificate> russianDeclarations;
-            List<Certificate> belarusCeritificatesAndDeclarations;
-            List<Certificate> armenianCeritificates;
-            List<Certificate> kirgizhstanCeritificates;
-            List<Certificate> kazkhstanCeritificates;
-            List<Certificate> russianCeritificates;
-            Future<List<Certificate>> futureArmenianDeclarations = null;
-            futureArmenianDeclarations = executeDeclInNewThread(armRep, value, resultSparrow, timeOut);
-            Future<List<Certificate>> futureKirgizhstanDeclarations = null;
-            futureKirgizhstanDeclarations = executeDeclInNewThread(kgRep, value, resultSparrow, timeOut);
-            Future<List<Certificate>> futureKazkhstanDeclarations = null;
-            futureKazkhstanDeclarations = executeDeclInNewThread(kzRep, value, resultSparrow, timeOut);
-            Future<List<Certificate>> futureRussianDeclarations = null;
-            futureRussianDeclarations = executeDeclInNewThread(rfRep, value, resultSparrow, timeOut);
-            Future<List<Certificate>> futureArmenianCeritificates = null;
-            futureArmenianCeritificates = executeCertslInNewThread(armRep, value, resultSparrow, timeOut);
-            Future<List<Certificate>> futureKirgizhstanCeritificates = null;
-            futureKirgizhstanCeritificates = executeCertslInNewThread(kgRep, value, resultSparrow, timeOut);
-            Future<List<Certificate>> futureKazkhstanCeritificates = null;
-            futureKazkhstanCeritificates = executeCertslInNewThread(kzRep, value, resultSparrow, timeOut);
-            Future<List<Certificate>> futureRussianCeritificates = null;
-            futureRussianCeritificates = executeCertslInNewThread(rfRep, value, resultSparrow, timeOut);
-            Future<List<Certificate>> futureBelarusCeritificatesAndDeclarations = null;
-            futureBelarusCeritificatesAndDeclarations = executor.submit(new Callable<List<Certificate>>() {
+            List<Future<List<Certificate>>> futureList = new ArrayList<>();
+            List<RegestryDAO> repList = new ArrayList();
+            repList.add(armRep);
+            repList.add(kgRep);
+            repList.add(kzRep);
+            repList.add(rfRep);
+            for (RegestryDAO o : repList) {
+                futureList.add(executeDeclInNewThread(o, value, resultSparrow, timeOut));
+                futureList.add(executeCertslInNewThread(o, value, resultSparrow, timeOut));
+            }
+            Future<List<Certificate>> futureBelarusCeritificatesAndDeclarations = executor.submit(new Callable<List<Certificate>>() {
                 @Override
                 public List<Certificate> call() {
                     try {
@@ -210,15 +209,22 @@ public class RegestryServiceImpl implements RegestryService {
                     }
                 }
             });
-            kirgizhstanDeclarations = getCertificates(futureKirgizhstanDeclarations);
-            armenianDeclarations = getCertificates(futureArmenianDeclarations);
-            kazkhstanDeclarations = getCertificates(futureKazkhstanDeclarations);
-            russianDeclarations = getCertificates(futureRussianDeclarations);
+            List<List<Certificate>> results = new ArrayList<>();
+            int conter = 0;
+            for (Future<List<Certificate>> f : futureList) {
+                if (hasCache) {
+                    if (infoEntity.getAlphabetical(conter) != null) {
+                        results.add(infoEntity.getAlphabetical(conter));
+                    } else {
+                        results.add(getCertificates(f));
+                    }
+                }else {
+                    results.add(getCertificates(f));
+                }
+                conter++;
+            }
+            List<Certificate> belarusCeritificatesAndDeclarations;
             belarusCeritificatesAndDeclarations = getCertificates(futureBelarusCeritificatesAndDeclarations);
-            armenianCeritificates = getCertificates(futureArmenianCeritificates);
-            kirgizhstanCeritificates = getCertificates(futureKirgizhstanCeritificates);
-            kazkhstanCeritificates = getCertificates(futureKazkhstanCeritificates);
-            russianCeritificates = getCertificates(futureRussianCeritificates);
             //Closing threads if smth went wrong
             executor.shutdownNow();
             List<Certificate> belarusCeritificates = null;
@@ -235,10 +241,11 @@ public class RegestryServiceImpl implements RegestryService {
                     }
                 }
             }
-
-        infoEntity=new InfoEntity(armenianDeclarations, armenianCeritificates, russianDeclarations, russianCeritificates, kazkhstanDeclarations, kazkhstanCeritificates, belarusCeritificates, belarusDeclarations, kirgizhstanCeritificates, kirgizhstanDeclarations);
-        addToCache2(infoEntity,value);
-        }catch (Exception e){
+            results.add(belarusDeclarations);
+            results.add(belarusCeritificates);
+            infoEntity = new InfoEntity(results);
+            addToCache2(infoEntity, value);
+        } catch (Exception e) {
             log.info(e);
         }
         return infoEntity;

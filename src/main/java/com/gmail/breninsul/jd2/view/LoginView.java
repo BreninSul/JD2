@@ -250,12 +250,15 @@ public class LoginView extends DivWithLoginFunction {
         initRegButton(route);
         initLogin();
         initReg();
-        dialog.add(form);
-        title.setText(getTranslation("login.log.title"));
+        initDialog();
         HorizontalLayout actions = new HorizontalLayout(loginLayout, regLayout);
         HorizontalLayout buttons = new HorizontalLayout(loginButton, regButton);
         VerticalLayout main = new VerticalLayout(actions, buttons);
         form.add(main);
+    }
+
+    private void initDialog() {
+        dialog.add(form);
         dialog.setWidth(DIALOG_WIDTH);
         dialog.setHeight(DIALOG_HEIGHT);
         dialog.setCloseOnEsc(false);

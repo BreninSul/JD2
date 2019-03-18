@@ -26,6 +26,7 @@ public abstract class AbstractSpringDataDAO<EntityType extends BaseEntity, DAOTy
     DAOType rep;
 
     public EntityType save(EntityType entity) {
+        log.error(entity.getId());
         return (EntityType) rep.save(entity);
     }
 

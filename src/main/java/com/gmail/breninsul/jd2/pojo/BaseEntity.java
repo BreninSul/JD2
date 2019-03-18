@@ -20,12 +20,12 @@ import java.util.Date;
 @CacheResult
 public abstract class BaseEntity {
     @Id
-    @GeneratedValue
-    private int id;
+    @GeneratedValue(strategy = GenerationType.TABLE)
+    private int id ;
     @CreationTimestamp
-    private Date createdDate=null;
+    private Date createdDate = null;
     @UpdateTimestamp
-    private Date updatedDate=null;
+    private Date updatedDate = null;
 
     @Override
     public boolean equals(Object o) {
@@ -42,6 +42,6 @@ public abstract class BaseEntity {
 
     @Override
     public String toString() {
-        return                 "id=" + id ;
+        return "id=" + id;
     }
 }

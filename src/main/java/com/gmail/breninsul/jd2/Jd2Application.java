@@ -8,6 +8,7 @@ import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.boot.autoconfigure.domain.EntityScan;
 import org.springframework.boot.autoconfigure.session.SessionAutoConfiguration;
 import org.springframework.boot.autoconfigure.web.servlet.MultipartAutoConfiguration;
+import org.springframework.boot.web.servlet.support.SpringBootServletInitializer;
 import org.springframework.cache.annotation.EnableCaching;
 import org.springframework.context.annotation.*;
 import org.springframework.data.jpa.repository.config.EnableJpaRepositories;
@@ -36,7 +37,7 @@ import java.util.Properties;
 @EnableTransactionManagement
 @EnableCaching
 @EnableAspectJAutoProxy
-public class Jd2Application {
+public class Jd2Application extends SpringBootServletInitializer {
     private final static String PERSISTENCE_UNIT = "sql";
     private final static String SQL_PROPERTIES_PATH = "sql.properties";
     private final static Properties SQL_PROPERTIES = new Properties();
